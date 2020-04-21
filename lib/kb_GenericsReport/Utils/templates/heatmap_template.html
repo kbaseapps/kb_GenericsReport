@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body {font-family: "Lato", sans-serif;}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+div.heatmap {
+  width: 100%;
+  height: 900px;
+  border: 1px solid #dddddd;
+}
+
+</style>
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<meta charset="UTF-8">
+<title>Heatmap</title>
+</head>
+<body>
+
+<p></p>
+
+<table>
+    <tr>
+        <td><button onclick="download_csv()">Download CSV</button></td>
+    </tr>
+
+</table>
+<p></p>
+<p></p>
+<div id='Heatmap' class="heatmap"></div>
+<script>
+
+var data_json = $.getJSON({'url': "heatmap_data_json_file_name", 'async': false});
+data_json = JSON.parse(data_json.responseText);
+
+drawHeatmap();
+
+function drawHeatmap() {
+
+    var values = data_json.values;
+    var y_labels = data_json.y_labels;
+    var x_labels = data_json.x_labels;
+
+    var data = [
+      {
+        z: values,
+        x: x_labels,
+        y: y_labels,
+        type: 'heatmap',
+        hoverongaps: false
+      },
+    ];
+
+    var layout = {
+        // autosize: false,
+        xaxis: {
+            automargin: true,
+            tickangle: 45,
+            tickfont: {
+                color : 'black',
+            },
+        },
+        yaxis: {
+            automargin: true,
+            tickfont: {
+                color : 'black',
+            },
+        },
+    };
+
+    var config = {responsive: true};
+
+    Plotly.newPlot('Heatmap', data, layout, config);
+};
+
+function download_csv() {
+    var csv = '';
+    var data = [['', '']];
+    data.forEach(function(row) {
+            csv += row.join(',');
+            csv += "\n";
+    });
+
+    var values = data_json.values;
+    var y_labels = data_json.y_labels;
+    var x_labels = data_json.x_labels;
+
+    csv += ' ,'
+    csv += x_labels.join(',');
+    csv += "\n";
+
+    y_labels.slice(0).reverse().forEach(function(y_label) {
+
+        var y_label = y_label.replace(',', '');
+        csv += y_label + ',';
+        csv += values[y_labels.indexOf(y_label)].join(',');
+        csv += "\n";
+    });
+
+    var hiddenElement = document.createElement('a');
+    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+    hiddenElement.target = '_blank';
+    hiddenElement.download = 'kbase_downloaded_data.csv';
+    hiddenElement.click();
+};
+
+
+</script>
+
+</body>
+</html>
