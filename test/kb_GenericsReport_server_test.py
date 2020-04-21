@@ -52,16 +52,18 @@ class kb_GenericsReportTest(unittest.TestCase):
             cls.wsClient.delete_workspace({'workspace': cls.wsName})
             print('Test workspace was deleted')
 
-    # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
-    def test_your_method(self):
-        # Prepare test objects in workspace if needed using
-        # self.getWsClient().save_objects({'workspace': self.getWsName(),
-        #                                  'objects': []})
-        #
-        # Run your method by
-        # ret = self.getImpl().your_method(self.getContext(), parameters...)
-        #
-        # Check returned data with
-        # self.assertEqual(ret[...], ...) or other unittest methods
-        ret = self.serviceImpl.run_kb_GenericsReport(self.ctx, {'workspace_name': self.wsName,
-                                                             'parameter_1': 'Hello World!'})
+    def test_bad_params(self):
+        with self.assertRaises(ValueError) as context:
+            self.serviceImpl.build_heatmap_html(self.ctx, {'workspace_name': self.wsName})
+            self.assertIn("Required keys", str(context.exception.args))
+
+    def test_build_heatmap_html(self):
+        params = {'tsv_file_path': os.path.join('data', 'amplicon_test.tsv')}
+        returnVal = self.serviceImpl.build_heatmap_html(self.ctx, params)[0]
+
+        self.assertIn('html_dir', returnVal)
+
+        html_dir = returnVal.get('html_dir')
+        html_report_files = os.listdir(html_dir)
+
+        self.assertEqual(2, len(html_report_files))
