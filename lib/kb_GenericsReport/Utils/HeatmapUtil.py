@@ -8,6 +8,8 @@ import uuid
 from scipy.cluster.hierarchy import dendrogram, linkage
 from scipy.spatial.distance import pdist
 import json
+import sys
+from matplotlib import pyplot as plt
 
 # from installed_clients.DataFileUtilClient import DataFileUtil
 
@@ -125,6 +127,9 @@ class HeatmapUtil:
         logging.basicConfig(format='%(created)s %(levelname)s: %(message)s',
                             level=logging.INFO)
         self.obj_cache = dict()
+
+        plt.switch_backend('agg')
+        sys.setrecursionlimit(150000)
 
     def build_heatmap_html(self, params):
 
