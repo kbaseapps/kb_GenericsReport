@@ -5,13 +5,11 @@ import logging
 import pandas as pd
 from xlrd.biffh import XLRDError
 import uuid
-from scipy.cluster.hierarchy import dendrogram, linkage
+from scipy.cluster.hierarchy import dendrogram, linkage, leaves_list
 from scipy.spatial.distance import pdist
 import json
 import sys
 from matplotlib import pyplot as plt
-
-# from installed_clients.DataFileUtilClient import DataFileUtil
 
 
 class HeatmapUtil:
@@ -34,16 +32,16 @@ class HeatmapUtil:
                                      dist_metric='euclidean',
                                      linkage_method='ward'):
 
-        # values = [[1, 0, 21, 50, 1], [20, 0, 60, 80, 30], [30, 60, 1, -10, 20]]
-        # labels = ['model_1', 'model_2', 'model_3']
         if len(labels) == 1:
             return labels
         dist_matrix = pdist(values, metric=dist_metric)
         linkage_matrix = linkage(dist_matrix, method=linkage_method)
 
-        dn = dendrogram(linkage_matrix, labels=labels, distance_sort='ascending')
+        # dn = dendrogram(linkage_matrix, labels=labels, distance_sort='ascending')
+        # ordered_label = dn['ivl']
 
-        ordered_label = dn['ivl']
+        ordered_index = leaves_list(linkage_matrix)
+        ordered_label = [labels[idx] for idx in ordered_index]
 
         return ordered_label
 
