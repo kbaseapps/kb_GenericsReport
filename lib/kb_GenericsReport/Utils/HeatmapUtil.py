@@ -134,10 +134,13 @@ class HeatmapUtil:
         tsv_file_path = params.get('tsv_file_path')
 
         data_df = self._read_csv_file(tsv_file_path)
-        if params.get('cluster_data', True):
-            dist_metric = params.get('dist_metric', 'euclidean')
-            linkage_method = params.get('linkage_method', 'ward')
-            data_df = self._cluster_data(data_df, dist_metric, linkage_method)
+        try:
+            if params.get('cluster_data', True):
+                dist_metric = params.get('dist_metric', 'euclidean')
+                linkage_method = params.get('linkage_method', 'ward')
+                data_df = self._cluster_data(data_df, dist_metric, linkage_method)
+        except Exception:
+            logging.warning('matrix is too large to be clustered')
         heatmap_data = self._build_heatmap_data(data_df)
         heatmap_html_dir = self._generate_heatmap_report(heatmap_data)
 
