@@ -12,6 +12,7 @@ import sys
 from matplotlib import pyplot as plt
 import plotly.graph_objects as go
 from plotly.offline import plot
+import plotly.express as px
 
 
 class HeatmapUtil:
@@ -103,11 +104,20 @@ class HeatmapUtil:
         heatmap_path = os.path.join(output_directory, 'heatmap_report_{}.html'.format(
                                                                                 str(uuid.uuid4())))
 
+        # Logarithmic Color scale
+        colors = px.colors.sequential.OrRd
+        colorscale = [[0, colors[1]],         # 0
+                      [1./10000, colors[2]],  # 10
+                      [1./1000, colors[3]],   # 100
+                      [1./100, colors[4]],    # 1000
+                      [1./10, colors[5]],     # 10000
+                      [1., colors[6]]]
         fig = go.Figure(data=go.Heatmap(
                    z=data_df.values,
                    x=data_df.columns,
                    y=data_df.index,
-                   hoverongaps=False))
+                   hoverongaps=False,
+                   colorscale=colorscale))
 
         plot(fig, filename=heatmap_path)
 
