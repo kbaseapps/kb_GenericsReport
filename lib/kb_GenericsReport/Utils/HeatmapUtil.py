@@ -10,6 +10,8 @@ from scipy.spatial.distance import pdist
 import json
 import sys
 from matplotlib import pyplot as plt
+import plotly.graph_objects as go
+from plotly.offline import plot
 
 
 class HeatmapUtil:
@@ -91,6 +93,26 @@ class HeatmapUtil:
 
         return heatmap_data
 
+    def _generate_heatmap_html(self, data_df):
+        logging.info('Start generating heatmap report')
+
+        output_directory = os.path.join(self.scratch, str(uuid.uuid4()))
+        logging.info('Start building report files in dir: {}'.format(output_directory))
+        self._mkdir_p(output_directory)
+
+        heatmap_path = os.path.join(output_directory, 'heatmap_report_{}.html'.format(
+                                                                                str(uuid.uuid4())))
+
+        fig = go.Figure(data=go.Heatmap(
+                   z=data_df.values,
+                   x=data_df.columns,
+                   y=data_df.index,
+                   hoverongaps=False))
+
+        plot(fig, filename=heatmap_path)
+
+        return output_directory
+
     def _generate_heatmap_report(self, heatmap_data):
         logging.info('Start generating heatmap report')
 
@@ -155,7 +177,8 @@ class HeatmapUtil:
             top_index = data_df.index[:int(data_df.index.size * top_percent / 100)]
             data_df = data_df.loc[top_index]
         data_df = data_df.iloc[::-1]
-        heatmap_data = self._build_heatmap_data(data_df)
-        heatmap_html_dir = self._generate_heatmap_report(heatmap_data)
+        # heatmap_data = self._build_heatmap_data(data_df)
+        # heatmap_html_dir = self._generate_heatmap_report(heatmap_data)
+        heatmap_html_dir = self._generate_heatmap_html(data_df)
 
         return {'html_dir': heatmap_html_dir}
