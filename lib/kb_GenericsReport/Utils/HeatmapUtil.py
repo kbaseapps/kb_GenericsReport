@@ -166,7 +166,7 @@ class HeatmapUtil:
         tsv_file_path = params.get('tsv_file_path')
 
         cluster_data = params.get('cluster_data', False)
-        sort_by_sum = params.get('sort_by_sum', True)
+        sort_by_sum = params.get('sort_by_sum', False)
         top_percent = params.get('top_percent', 100)
 
         if cluster_data and sort_by_sum:
