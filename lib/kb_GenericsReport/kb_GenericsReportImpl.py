@@ -24,7 +24,7 @@ class kb_GenericsReport:
     ######################################### noqa
     VERSION = "1.0.0"
     GIT_URL = "https://github.com/Tianhao-Gu/kb_GenericsReport.git"
-    GIT_COMMIT_HASH = "43370a4d452cbbe588f4ad070d6d7b72cafb57d1"
+    GIT_COMMIT_HASH = "8d56b6a4b237a00db003c91f457cf0143e48a7a2"
 
     #BEGIN_CLASS_HEADER
     @staticmethod
@@ -62,7 +62,7 @@ class kb_GenericsReport:
            params: tsv_file_path: matrix data in tsv format optional params:
            cluster_data: True if data should be clustered. Default: False
            sort_by_sum: True if data should be sorted by sum of values.
-           Default: True top_percent: Only display top x percent of data.
+           Default: False top_percent: Only display top x percent of data.
            Default: 100 dist_metric: distance metric used for clustering.
            Default: euclidean
            (https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial
