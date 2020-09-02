@@ -5,7 +5,7 @@ import logging
 import pandas as pd
 from xlrd.biffh import XLRDError
 import uuid
-from scipy.cluster.hierarchy import dendrogram, linkage, leaves_list
+from scipy.cluster.hierarchy import linkage, leaves_list
 from scipy.spatial.distance import pdist
 import json
 import sys
