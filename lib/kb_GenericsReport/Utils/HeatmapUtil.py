@@ -186,7 +186,7 @@ class HeatmapUtil:
             data_df = data_df.reindex(sum_order)
             top_index = data_df.index[:int(data_df.index.size * top_percent / 100)]
             data_df = data_df.loc[top_index]
-        data_df = data_df.iloc[::-1]
+            data_df = data_df.iloc[::-1]
         # heatmap_data = self._build_heatmap_data(data_df)
         # heatmap_html_dir = self._generate_heatmap_report(heatmap_data)
         heatmap_html_dir = self._generate_heatmap_html(data_df)
