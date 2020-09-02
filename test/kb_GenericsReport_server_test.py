@@ -66,4 +66,4 @@ class kb_GenericsReportTest(unittest.TestCase):
         html_dir = returnVal.get('html_dir')
         html_report_files = os.listdir(html_dir)
 
-        self.assertEqual(2, len(html_report_files))
+        self.assertEqual(1, len(html_report_files))
