@@ -133,14 +133,28 @@ class HeatmapUtil:
 
         tsv_file_path = params.get('tsv_file_path')
 
+        cluster_data = params.get('cluster_data', False)
+        sort_by_sum = params.get('sort_by_sum', True)
+        top_percent = params.get('top_percent', 100)
+
+        if cluster_data and sort_by_sum:
+            raise ValueError('Please choose either cluster_data or sort_by_sum')
+
         data_df = self._read_csv_file(tsv_file_path)
-        try:
-            if params.get('cluster_data', True):
-                dist_metric = params.get('dist_metric', 'euclidean')
-                linkage_method = params.get('linkage_method', 'ward')
-                data_df = self._cluster_data(data_df, dist_metric, linkage_method)
-        except Exception:
-            logging.warning('matrix is too large to be clustered')
+        if cluster_data:
+            try:
+                if params.get('cluster_data', True):
+                    dist_metric = params.get('dist_metric', 'euclidean')
+                    linkage_method = params.get('linkage_method', 'ward')
+                    data_df = self._cluster_data(data_df, dist_metric, linkage_method)
+            except Exception:
+                logging.warning('matrix is too large to be clustered')
+        if sort_by_sum:
+            sum_order = data_df.sum(axis=1).sort_values(ascending=False).index
+            data_df = data_df.reindex(sum_order)
+            top_index = data_df.index[:int(data_df.index.size * top_percent / 100)]
+            data_df = data_df.loc[top_index]
+        data_df = data_df.iloc[::-1]
         heatmap_data = self._build_heatmap_data(data_df)
         heatmap_html_dir = self._generate_heatmap_report(heatmap_data)
 

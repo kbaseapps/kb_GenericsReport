@@ -24,7 +24,7 @@ class kb_GenericsReport:
     ######################################### noqa
     VERSION = "1.0.0"
     GIT_URL = "https://github.com/Tianhao-Gu/kb_GenericsReport.git"
-    GIT_COMMIT_HASH = "e4039b10ee7d4fd23c6260481c345251dd932d97"
+    GIT_COMMIT_HASH = "43370a4d452cbbe588f4ad070d6d7b72cafb57d1"
 
     #BEGIN_CLASS_HEADER
     @staticmethod
@@ -60,16 +60,20 @@ class kb_GenericsReport:
         """
         :param params: instance of type "build_heatmap_html_params" (required
            params: tsv_file_path: matrix data in tsv format optional params:
-           cluster_data: True if data should be clustered. Default: True
-           dist_metric: distance metric used for clustering. Default:
-           euclidean
+           cluster_data: True if data should be clustered. Default: False
+           sort_by_sum: True if data should be sorted by sum of values.
+           Default: True top_percent: Only display top x percent of data.
+           Default: 100 dist_metric: distance metric used for clustering.
+           Default: euclidean
            (https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial
            .distance.pdist.html) linkage_method: linkage method used for
            clustering. Default: ward
            (https://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster
            .hierarchy.linkage.html)) -> structure: parameter "tsv_file_path"
            of String, parameter "cluster_data" of type "boolean" (A boolean -
-           0 for false, 1 for true.), parameter "dist_metric" of String,
+           0 for false, 1 for true.), parameter "sort_by_sum" of type
+           "boolean" (A boolean - 0 for false, 1 for true.), parameter
+           "top_percent" of Long, parameter "dist_metric" of String,
            parameter "linkage_method" of String
         :returns: instance of type "build_heatmap_html_result" -> structure:
            parameter "html_dir" of String
@@ -78,7 +82,8 @@ class kb_GenericsReport:
         # return variables are: output
         #BEGIN build_heatmap_html
         self.validate_params(params, ['tsv_file_path'],
-                             opt_param=['cluster_data', 'dist_metric', 'linkage_method'])
+                             opt_param=['cluster_data', 'sort_by_sum', 'top_percent'
+                                        'dist_metric', 'linkage_method'])
         output = self.heatmap_util.build_heatmap_html(params)
         #END build_heatmap_html
 
