@@ -29,6 +29,7 @@ module kb_GenericsReport {
 
         boolean cluster_data;
         boolean sort_by_sum;
+        int top_percent;
         string dist_metric;
         string linkage_method;
     } build_heatmap_html_params;
