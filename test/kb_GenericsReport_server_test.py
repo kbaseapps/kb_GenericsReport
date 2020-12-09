@@ -57,8 +57,39 @@ class kb_GenericsReportTest(unittest.TestCase):
             self.serviceImpl.build_heatmap_html(self.ctx, {'workspace_name': self.wsName})
             self.assertIn("Required keys", str(context.exception.args))
 
+        with self.assertRaises(ValueError) as context:
+            self.serviceImpl.build_heatmap_html(self.ctx, {'tsv_file_path': 'a_file',
+                                                           'centered_by': 'not_number'})
+            self.assertIn("Please provide a numeric centered_by argument",
+                          str(context.exception.args))
+
+        with self.assertRaises(ValueError) as context:
+            self.serviceImpl.build_heatmap_html(self.ctx, {'tsv_file_path': 'a_file',
+                                                           'top_percent': 'not_number'})
+            self.assertIn("Please provide a numeric (>100) top_percent argument",
+                          str(context.exception.args))
+
+        with self.assertRaises(ValueError) as context:
+            self.serviceImpl.build_heatmap_html(self.ctx, {'tsv_file_path': 'a_file',
+                                                           'top_percent': 110})
+            self.assertIn("Please provide a numeric (>100) top_percent argument",
+                          str(context.exception.args))
+
     def test_build_heatmap_html(self):
-        params = {'tsv_file_path': os.path.join('data', 'amplicon_test.tsv')}
+        params = {'tsv_file_path': os.path.join('data', 'amplicon_test.tsv'),
+                  'centered_by': 10}
+        returnVal = self.serviceImpl.build_heatmap_html(self.ctx, params)[0]
+
+        self.assertIn('html_dir', returnVal)
+
+        html_dir = returnVal.get('html_dir')
+        html_report_files = os.listdir(html_dir)
+
+        self.assertEqual(1, len(html_report_files))
+
+        params = {'tsv_file_path': os.path.join('data', 'amplicon_test.tsv'),
+                  'sort_by_sum': True,
+                  'top_percent': 30}
         returnVal = self.serviceImpl.build_heatmap_html(self.ctx, params)[0]
 
         self.assertIn('html_dir', returnVal)

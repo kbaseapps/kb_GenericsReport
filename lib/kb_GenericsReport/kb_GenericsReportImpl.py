@@ -24,7 +24,7 @@ class kb_GenericsReport:
     ######################################### noqa
     VERSION = "1.0.0"
     GIT_URL = "https://github.com/Tianhao-Gu/kb_GenericsReport.git"
-    GIT_COMMIT_HASH = "8d56b6a4b237a00db003c91f457cf0143e48a7a2"
+    GIT_COMMIT_HASH = "554d52aa3293554def4549bd39e493bc448e6a8a"
 
     #BEGIN_CLASS_HEADER
     @staticmethod
@@ -60,11 +60,12 @@ class kb_GenericsReport:
         """
         :param params: instance of type "build_heatmap_html_params" (required
            params: tsv_file_path: matrix data in tsv format optional params:
-           cluster_data: True if data should be clustered. Default: False
+           cluster_data: True if data should be clustered. Default: True
            sort_by_sum: True if data should be sorted by sum of values.
            Default: False top_percent: Only display top x percent of data.
-           Default: 100 dist_metric: distance metric used for clustering.
-           Default: euclidean
+           Default: 100 centered_by: set midpoint of color range. Default:
+           None dist_metric: distance metric used for clustering. Default:
+           euclidean
            (https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial
            .distance.pdist.html) linkage_method: linkage method used for
            clustering. Default: ward
@@ -73,8 +74,9 @@ class kb_GenericsReport:
            of String, parameter "cluster_data" of type "boolean" (A boolean -
            0 for false, 1 for true.), parameter "sort_by_sum" of type
            "boolean" (A boolean - 0 for false, 1 for true.), parameter
-           "top_percent" of Long, parameter "dist_metric" of String,
-           parameter "linkage_method" of String
+           "top_percent" of Long, parameter "centered_by" of Double,
+           parameter "dist_metric" of String, parameter "linkage_method" of
+           String
         :returns: instance of type "build_heatmap_html_result" -> structure:
            parameter "html_dir" of String
         """
@@ -83,7 +85,7 @@ class kb_GenericsReport:
         #BEGIN build_heatmap_html
         self.validate_params(params, ['tsv_file_path'],
                              opt_param=['cluster_data', 'sort_by_sum', 'top_percent'
-                                        'dist_metric', 'linkage_method'])
+                                        'dist_metric', 'linkage_method', 'centered_by'])
         output = self.heatmap_util.build_heatmap_html(params)
         #END build_heatmap_html
 

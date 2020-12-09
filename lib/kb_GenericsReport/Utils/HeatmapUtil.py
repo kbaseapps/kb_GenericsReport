@@ -94,7 +94,7 @@ class HeatmapUtil:
 
         return heatmap_data
 
-    def _generate_heatmap_html(self, data_df):
+    def _generate_heatmap_html(self, data_df, centered_by):
         logging.info('Start generating heatmap report')
 
         output_directory = os.path.join(self.scratch, str(uuid.uuid4()))
@@ -104,20 +104,40 @@ class HeatmapUtil:
         heatmap_path = os.path.join(output_directory, 'heatmap_report_{}.html'.format(
                                                                                 str(uuid.uuid4())))
 
-        # Logarithmic Color scale
-        colors = px.colors.sequential.OrRd
-        colorscale = [[0, colors[1]],         # 0
-                      [1./10000, colors[2]],  # 10
-                      [1./1000, colors[3]],   # 100
-                      [1./100, colors[4]],    # 1000
-                      [1./10, colors[5]],     # 10000
-                      [1., colors[6]]]
+        if centered_by is not None:
+            colors = px.colors.sequential.RdBu
+            colorscale = [[0.0, colors[10]],
+                          [0.1, colors[9]],
+                          [0.2, colors[8]],
+                          [0.3, colors[7]],
+                          [0.4, colors[6]],
+                          [0.5, colors[5]],
+                          [0.6, colors[4]],
+                          [0.7, colors[3]],
+                          [0.8, colors[2]],
+                          [0.9, colors[1]],
+                          [1.0, colors[0]]]
+        else:
+            # Logarithmic Color scale
+            colors = px.colors.sequential.OrRd
+            colorscale = [[0, colors[1]],         # 0
+                          [1./10000, colors[2]],  # 10
+                          [1./1000, colors[3]],   # 100
+                          [1./100, colors[4]],    # 1000
+                          [1./10, colors[5]],     # 10000
+                          [1., colors[6]]]
+
         fig = go.Figure(data=go.Heatmap(
-                   z=data_df.values,
-                   x=data_df.columns,
-                   y=data_df.index,
-                   hoverongaps=False,
-                   colorscale=colorscale))
+           z=data_df.values,
+           x=data_df.columns,
+           y=data_df.index,
+           hoverongaps=False,
+           coloraxis='coloraxis'))
+
+        if centered_by is not None:
+            fig.update_layout(coloraxis=dict(cmid=centered_by, colorscale=colorscale))
+        else:
+            fig.update_layout(coloraxis=dict(colorscale=colorscale))
 
         plot(fig, filename=heatmap_path)
 
@@ -148,6 +168,14 @@ class HeatmapUtil:
 
         return output_directory
 
+    @staticmethod
+    def _is_numeric(number):
+        try:
+            int(number)
+            return True
+        except Exception:
+            return False
+
     def __init__(self, config):
         self.callback_url = config['SDK_CALLBACK_URL']
         self.endpoint = config['kbase-endpoint']
@@ -165,12 +193,16 @@ class HeatmapUtil:
 
         tsv_file_path = params.get('tsv_file_path')
 
-        cluster_data = params.get('cluster_data', False)
+        cluster_data = params.get('cluster_data', True)
         sort_by_sum = params.get('sort_by_sum', False)
         top_percent = params.get('top_percent', 100)
+        centered_by = params.get('centered_by')
 
-        if cluster_data and sort_by_sum:
-            raise ValueError('Please choose either cluster_data or sort_by_sum')
+        if not self._is_numeric(top_percent) or top_percent > 100:
+            raise ValueError('Please provide a numeric (>100) top_percent argument')
+
+        if centered_by is not None and not self._is_numeric(centered_by):
+            raise ValueError('Please provide a numeric centered_by argument')
 
         data_df = self._read_csv_file(tsv_file_path)
         if cluster_data:
@@ -185,15 +217,15 @@ class HeatmapUtil:
             data_df = data_df.reindex(sum_order)
             top_index = data_df.index[:int(data_df.index.size * top_percent / 100)]
             data_df = data_df.loc[top_index]
-            # data_df = data_df.iloc[::-1]
-            try:
-                dist_metric = params.get('dist_metric', 'euclidean')
-                linkage_method = params.get('linkage_method', 'ward')
-                data_df = self._cluster_data(data_df, dist_metric, linkage_method)
-            except Exception:
-                logging.warning('matrix is too large to be clustered')
+            if cluster_data:
+                try:
+                    dist_metric = params.get('dist_metric', 'euclidean')
+                    linkage_method = params.get('linkage_method', 'ward')
+                    data_df = self._cluster_data(data_df, dist_metric, linkage_method)
+                except Exception:
+                    logging.warning('matrix is too large to be clustered')
         # heatmap_data = self._build_heatmap_data(data_df)
         # heatmap_html_dir = self._generate_heatmap_report(heatmap_data)
-        heatmap_html_dir = self._generate_heatmap_html(data_df)
+        heatmap_html_dir = self._generate_heatmap_html(data_df, centered_by)
 
         return {'html_dir': heatmap_html_dir}
