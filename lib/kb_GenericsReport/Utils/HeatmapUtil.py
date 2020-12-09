@@ -168,6 +168,14 @@ class HeatmapUtil:
 
         return output_directory
 
+    @staticmethod
+    def _is_numeric(number):
+        try:
+            int(number)
+            return True
+        except Exception:
+            return False
+
     def __init__(self, config):
         self.callback_url = config['SDK_CALLBACK_URL']
         self.endpoint = config['kbase-endpoint']
@@ -190,8 +198,11 @@ class HeatmapUtil:
         top_percent = params.get('top_percent', 100)
         centered_by = params.get('centered_by')
 
-        # if cluster_data and sort_by_sum:
-        #     raise ValueError('Please choose either cluster_data or sort_by_sum')
+        if not self._is_numeric(top_percent) or top_percent > 100:
+            raise ValueError('Please provide a numeric (>100) top_percent argument')
+
+        if centered_by is not None and not self._is_numeric(centered_by):
+            raise ValueError('Please provide a numeric centered_by argument')
 
         data_df = self._read_csv_file(tsv_file_path)
         if cluster_data:
