@@ -24,7 +24,7 @@ class kb_GenericsReport:
     ######################################### noqa
     VERSION = "1.0.0"
     GIT_URL = "https://github.com/Tianhao-Gu/kb_GenericsReport.git"
-    GIT_COMMIT_HASH = "840c20c8fae7c06a63e33db4f222ab09f5b439be"
+    GIT_COMMIT_HASH = "554d52aa3293554def4549bd39e493bc448e6a8a"
 
     #BEGIN_CLASS_HEADER
     @staticmethod
@@ -60,7 +60,7 @@ class kb_GenericsReport:
         """
         :param params: instance of type "build_heatmap_html_params" (required
            params: tsv_file_path: matrix data in tsv format optional params:
-           cluster_data: True if data should be clustered. Default: False
+           cluster_data: True if data should be clustered. Default: True
            sort_by_sum: True if data should be sorted by sum of values.
            Default: False top_percent: Only display top x percent of data.
            Default: 100 centered_by: set midpoint of color range. Default:
@@ -74,8 +74,9 @@ class kb_GenericsReport:
            of String, parameter "cluster_data" of type "boolean" (A boolean -
            0 for false, 1 for true.), parameter "sort_by_sum" of type
            "boolean" (A boolean - 0 for false, 1 for true.), parameter
-           "top_percent" of Long, parameter "dist_metric" of String,
-           parameter "linkage_method" of String
+           "top_percent" of Long, parameter "centered_by" of Double,
+           parameter "dist_metric" of String, parameter "linkage_method" of
+           String
         :returns: instance of type "build_heatmap_html_result" -> structure:
            parameter "html_dir" of String
         """
