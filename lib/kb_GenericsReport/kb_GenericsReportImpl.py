@@ -24,7 +24,7 @@ class kb_GenericsReport:
     ######################################### noqa
     VERSION = "1.0.0"
     GIT_URL = "https://github.com/Tianhao-Gu/kb_GenericsReport.git"
-    GIT_COMMIT_HASH = "8d56b6a4b237a00db003c91f457cf0143e48a7a2"
+    GIT_COMMIT_HASH = "840c20c8fae7c06a63e33db4f222ab09f5b439be"
 
     #BEGIN_CLASS_HEADER
     @staticmethod
@@ -63,8 +63,9 @@ class kb_GenericsReport:
            cluster_data: True if data should be clustered. Default: False
            sort_by_sum: True if data should be sorted by sum of values.
            Default: False top_percent: Only display top x percent of data.
-           Default: 100 dist_metric: distance metric used for clustering.
-           Default: euclidean
+           Default: 100 centered_by: set midpoint of color range. Default:
+           None dist_metric: distance metric used for clustering. Default:
+           euclidean
            (https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial
            .distance.pdist.html) linkage_method: linkage method used for
            clustering. Default: ward
