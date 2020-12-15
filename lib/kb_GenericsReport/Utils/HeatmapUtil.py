@@ -127,12 +127,15 @@ class HeatmapUtil:
                           [1./10, colors[5]],     # 10000
                           [1., colors[6]]]
 
+        layout = go.Layout(xaxis={'type': 'category'},
+                           yaxis={'type': 'category'})
+
         fig = go.Figure(data=go.Heatmap(
            z=data_df.values,
            x=data_df.columns,
            y=data_df.index,
            hoverongaps=False,
-           coloraxis='coloraxis'))
+           coloraxis='coloraxis'), layout=layout)
 
         if centered_by is not None:
             fig.update_layout(coloraxis=dict(cmid=centered_by, colorscale=colorscale))
