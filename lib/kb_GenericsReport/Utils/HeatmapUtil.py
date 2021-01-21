@@ -13,6 +13,7 @@ from matplotlib import pyplot as plt
 import plotly.graph_objects as go
 from plotly.offline import plot
 import plotly.express as px
+import plotly.figure_factory as ff
 
 
 class HeatmapUtil:
@@ -94,7 +95,8 @@ class HeatmapUtil:
 
         return heatmap_data
 
-    def _generate_heatmap_html(self, data_df, centered_by):
+    def _generate_heatmap_html(self, data_df, centered_by, cluster_data, dist_metric,
+                               linkage_method):
         logging.info('Start generating heatmap report')
 
         output_directory = os.path.join(self.scratch, str(uuid.uuid4()))
@@ -103,6 +105,126 @@ class HeatmapUtil:
 
         heatmap_path = os.path.join(output_directory, 'heatmap_report_{}.html'.format(
                                                                                 str(uuid.uuid4())))
+
+        heatmap = go.Heatmap(
+                       z=data_df.values,
+                       x=data_df.columns,
+                       y=data_df.index,
+                       hoverongaps=False,
+                       coloraxis='coloraxis')
+
+        if cluster_data:
+            # Initialize figure by creating upper dendrogram
+            fig = ff.create_dendrogram(data_df.T.values,
+                                       orientation='bottom',
+                                       labels=data_df.columns,
+                                       colorscale=px.colors.qualitative.Set2,
+                                       distfun=lambda x: pdist(x, metric=dist_metric),
+                                       linkagefun=lambda x: linkage(x, method=linkage_method))
+            for i in range(len(fig['data'])):
+                fig['data'][i]['yaxis'] = 'y2'
+
+            # Create Side Dendrogram
+            dendro_side = ff.create_dendrogram(data_df.values,
+                                               orientation='left',
+                                               labels=data_df.index,
+                                               colorscale=px.colors.qualitative.Set2,
+                                               distfun=lambda x: pdist(x, metric=dist_metric),
+                                               linkagefun=lambda x: linkage(x,
+                                                                            method=linkage_method))
+            for i in range(len(dendro_side['data'])):
+                dendro_side['data'][i]['xaxis'] = 'x2'
+
+            # Add Side Dendrogram Data to Figure
+            for data in dendro_side['data']:
+                fig.add_trace(data)
+
+            idx_ordered_label = dendro_side['layout']['yaxis']['ticktext']
+            col_ordered_label = fig['layout']['xaxis']['ticktext']
+
+            data_df = data_df.reindex(index=idx_ordered_label, columns=col_ordered_label)
+
+            heatmap['x'] = fig['layout']['xaxis']['tickvals']
+            heatmap['y'] = dendro_side['layout']['yaxis']['tickvals']
+            heatmap['z'] = data_df.values
+
+            # Add Heatmap Data to Figure
+            fig.add_trace(heatmap)
+
+            width = max(100 * data_df.columns.size, 1400)
+            height = max(10 * data_df.index.size, 1000)
+            y2_height = 100
+            x2_width = 150
+            y2_offset = y2_height / height
+            x2_offset = x2_width / width
+
+            fig.update_layout({'plot_bgcolor': 'rgba(0,0,0,0)',
+                               'showlegend': False,
+                               'width': width,
+                               'height': height,
+                               'autosize': True,
+                               'hovermode': 'closest'})
+
+            # Edit xaxis
+            fig.update_layout(xaxis={'domain': [0, max(1-x2_offset, 0.825)],
+                                     'mirror': False,
+                                     'showgrid': False,
+                                     'showline': False,
+                                     'zeroline': False,
+                                     'automargin': True,
+                                     'tickangle': 45,
+                                     'tickfont': dict(color='black', size=8),
+                                     'ticks': ""})
+            # Edit xaxis2
+            fig.update_layout(xaxis2={'domain': [max(1-x2_offset, 0.825), 1],
+                                      'mirror': False,
+                                      'showgrid': False,
+                                      'showline': False,
+                                      'zeroline': False,
+                                      'showticklabels': False,
+                                      'ticks': ""})
+
+            # Edit yaxis
+            fig.update_layout(yaxis={'domain': [0, max(1-y2_offset, 0.85)],
+                                     'mirror': False,
+                                     'showgrid': False,
+                                     'showline': False,
+                                     'zeroline': False,
+                                     'automargin': True,
+                                     'tickfont': dict(color='black', size=8),
+                                     'ticks': "",
+                                     'ticktext': dendro_side['layout']['yaxis']['ticktext'],
+                                     'tickvals': dendro_side['layout']['yaxis']['tickvals']
+                                     })
+            # Edit yaxis2
+            fig.update_layout(yaxis2={'domain': [max(1-y2_offset, 0.85), 1],
+                                      'mirror': False,
+                                      'showgrid': False,
+                                      'showline': False,
+                                      'zeroline': False,
+                                      'showticklabels': False,
+                                      'ticks': ""})
+
+        else:
+            layout = go.Layout(xaxis={'type': 'category'},
+                               yaxis={'type': 'category'})
+
+            fig = go.Figure(data=heatmap, layout=layout)
+
+            width = max(100 * data_df.columns.size, 1400)
+            height = max(10 * data_df.index.size, 1000)
+
+            fig.update_layout(xaxis={'automargin': True,
+                                     'tickangle': 45,
+                                     'tickfont': dict(color='black', size=8)},
+                              yaxis={'automargin': True,
+                                     'tickfont': dict(color='black', size=8)},
+                              width=width,
+                              height=height,
+                              hovermode='closest',
+                              plot_bgcolor='rgba(0,0,0,0)',
+                              autosize=True,
+                              showlegend=False)
 
         if centered_by is not None:
             colors = px.colors.sequential.RdBu
@@ -117,6 +239,7 @@ class HeatmapUtil:
                           [0.8, colors[2]],
                           [0.9, colors[1]],
                           [1.0, colors[0]]]
+            fig.update_layout(coloraxis=dict(cmid=centered_by, colorscale=colorscale))
         else:
             # Logarithmic Color scale
             colors = px.colors.sequential.OrRd
@@ -126,20 +249,6 @@ class HeatmapUtil:
                           [1./100, colors[4]],    # 1000
                           [1./10, colors[5]],     # 10000
                           [1., colors[6]]]
-
-        layout = go.Layout(xaxis={'type': 'category'},
-                           yaxis={'type': 'category'})
-
-        fig = go.Figure(data=go.Heatmap(
-           z=data_df.values,
-           x=data_df.columns,
-           y=data_df.index,
-           hoverongaps=False,
-           coloraxis='coloraxis'), layout=layout)
-
-        if centered_by is not None:
-            fig.update_layout(coloraxis=dict(cmid=centered_by, colorscale=colorscale))
-        else:
             fig.update_layout(coloraxis=dict(colorscale=colorscale))
 
         plot(fig, filename=heatmap_path)
@@ -229,6 +338,7 @@ class HeatmapUtil:
                     logging.warning('matrix is too large to be clustered')
         # heatmap_data = self._build_heatmap_data(data_df)
         # heatmap_html_dir = self._generate_heatmap_report(heatmap_data)
-        heatmap_html_dir = self._generate_heatmap_html(data_df, centered_by)
+        heatmap_html_dir = self._generate_heatmap_html(data_df, centered_by, cluster_data,
+                                                       dist_metric, linkage_method)
 
         return {'html_dir': heatmap_html_dir}
