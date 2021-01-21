@@ -89,7 +89,7 @@ class kb_GenericsReportTest(unittest.TestCase):
 
         params = {'tsv_file_path': os.path.join('data', 'amplicon_test.tsv'),
                   'sort_by_sum': True,
-                  'top_percent': 30}
+                  'top_percent': 90}
         returnVal = self.serviceImpl.build_heatmap_html(self.ctx, params)[0]
 
         self.assertIn('html_dir', returnVal)
