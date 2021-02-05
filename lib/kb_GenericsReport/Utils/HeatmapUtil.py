@@ -151,7 +151,7 @@ class HeatmapUtil:
             # Add Heatmap Data to Figure
             fig.add_trace(heatmap)
 
-            width = max(100 * data_df.columns.size, 1400)
+            width = max(15 * data_df.columns.size, 1400)
             height = max(10 * data_df.index.size, 1000)
             y2_height = 100
             x2_width = 150
@@ -211,7 +211,7 @@ class HeatmapUtil:
 
             fig = go.Figure(data=heatmap, layout=layout)
 
-            width = max(100 * data_df.columns.size, 1400)
+            width = max(15 * data_df.columns.size, 1400)
             height = max(10 * data_df.index.size, 1000)
 
             fig.update_layout(xaxis={'automargin': True,
