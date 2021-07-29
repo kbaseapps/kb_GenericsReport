@@ -84,7 +84,7 @@ class kb_GenericsReport:
         # return variables are: output
         #BEGIN build_heatmap_html
         self.validate_params(params, ['tsv_file_path'],
-                             opt_param=['cluster_data', 'sort_by_sum', 'top_percent'
+                             opt_param=['cluster_data', 'sort_by_sum', 'top_percent',
                                         'dist_metric', 'linkage_method', 'centered_by'])
         output = self.heatmap_util.build_heatmap_html(params)
         #END build_heatmap_html
