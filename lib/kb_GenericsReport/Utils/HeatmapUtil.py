@@ -319,8 +319,9 @@ class HeatmapUtil:
             raise ValueError('Please provide a numeric centered_by argument')
 
         data_df = self._read_csv_file(tsv_file_path)
-        if cluster_data and top_percent != 100:
+        if cluster_data and int(top_percent) == 100:
             try:
+                logging.info('Start clustering the whole data set')
                 data_df = self._cluster_data(data_df, dist_metric, linkage_method)
             except Exception:
                 logging.warning('matrix is too large to be clustered')
@@ -331,6 +332,7 @@ class HeatmapUtil:
             data_df = data_df.loc[top_index]
             if cluster_data:
                 try:
+                    logging.info('Start clustering the {} top percent data set'.format(top_percent))
                     data_df = self._cluster_data(data_df, dist_metric, linkage_method)
                 except Exception:
                     logging.warning('matrix is too large to be clustered')
