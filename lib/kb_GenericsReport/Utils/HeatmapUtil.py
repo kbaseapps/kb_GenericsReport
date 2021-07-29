@@ -313,13 +313,13 @@ class HeatmapUtil:
         linkage_method = params.get('linkage_method', 'ward')
 
         if not self._is_numeric(top_percent) or top_percent > 100:
-            raise ValueError('Please provide a numeric (>100) top_percent argument')
+            raise ValueError('Please provide a numeric (<100) top_percent argument')
 
         if centered_by is not None and not self._is_numeric(centered_by):
             raise ValueError('Please provide a numeric centered_by argument')
 
         data_df = self._read_csv_file(tsv_file_path)
-        if cluster_data:
+        if cluster_data and top_percent != 100:
             try:
                 data_df = self._cluster_data(data_df, dist_metric, linkage_method)
             except Exception:
