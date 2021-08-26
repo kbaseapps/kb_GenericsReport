@@ -27,3 +27,6 @@ install:
 - kb-sdk version
 script:
 - kb-sdk validate
+
+after_success:
+- coveralls

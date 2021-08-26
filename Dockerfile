@@ -13,6 +13,8 @@ RUN apt-get install -y gcc wget
 RUN pip install --upgrade pip \
     && python --version
 
+RUN pip install coverage==5.5
+
 RUN pip install numpy==1.19.1 \
     && pip install pandas==1.1.1 --ignore-installed certifi \
     && pip install matplotlib==3.3.1 \
