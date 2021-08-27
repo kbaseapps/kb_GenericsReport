@@ -1,3 +1,5 @@
+name: Lintly Flake8
+
 on: [pull_request]
 
 jobs:

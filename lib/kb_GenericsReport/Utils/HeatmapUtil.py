@@ -40,6 +40,8 @@ class HeatmapUtil:
             return labels
         dist_matrix = pdist(values, metric=dist_metric)
         linkage_matrix = linkage(dist_matrix, method=linkage_method)
+        test_flake8 = 'a'
+        print ('test_flake8')
 
         # dn = dendrogram(linkage_matrix, labels=labels, distance_sort='ascending')
         # ordered_label = dn['ivl']
