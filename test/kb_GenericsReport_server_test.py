@@ -45,7 +45,6 @@ class kb_GenericsReportTest(unittest.TestCase):
         suffix = int(time.time() * 1000)
         cls.wsName = "test_ContigFilter_" + str(suffix)
         ret = cls.wsClient.create_workspace({'workspace': cls.wsName})  # noqa
-        test_flake8 = 's'
 
     @classmethod
     def tearDownClass(cls):
