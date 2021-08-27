@@ -6,7 +6,13 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: pip install flake8 lintly
       - uses: grantmcconnaughey/lintly-flake8-github-action@v1.0
         with:
           # The GitHub API token to create reviews with
@@ -14,4 +20,4 @@ jobs:
           # Fail if "new" violations detected or "any", default "new"
           failIf: new
           # Additional arguments to pass to flake8, default "." (current directory)
-          args: "--ignore=E121,E123 ."
+          args: "--ignore=E121,E123 . --max-line-length 99 ."

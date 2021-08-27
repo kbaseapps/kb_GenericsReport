@@ -22,6 +22,7 @@ class TokenCache(object):
         self._cache = {}
         self._maxsize = maxsize
         self._halfmax = maxsize / 2  # int division to round down
+        test_flake8 = 'a'
 
     def get_user(self, token):
         token = hashlib.sha256(token.encode('utf-8')).hexdigest()
