@@ -1,0 +1,4 @@
+ignore:
+  - "lib/installed_clients"
+  - "lib/kb_GenericsReport/kb_GenericsReportServer.py"
+  - "lib/kb_GenericsReport/kb_GenericsReportImpl.py"
