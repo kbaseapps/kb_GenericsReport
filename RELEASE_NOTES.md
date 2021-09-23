@@ -1,6 +1,7 @@
 # kb_GenericsReport release notes
 =========================================
 
-0.0.0
+1.0.0
 -----
-* Module created by kb-sdk init
+* Thie module creates heatmap report block for Generics matrix related apps (Upload Matrix, Transform Matrix, etc.)
+
