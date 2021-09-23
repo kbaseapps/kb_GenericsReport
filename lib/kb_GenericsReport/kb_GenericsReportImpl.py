@@ -23,8 +23,8 @@ class kb_GenericsReport:
     # the latter method is running.
     ######################################### noqa
     VERSION = "1.0.0"
-    GIT_URL = "https://github.com/Tianhao-Gu/kb_GenericsReport.git"
-    GIT_COMMIT_HASH = "554d52aa3293554def4549bd39e493bc448e6a8a"
+    GIT_URL = "git@github.com:Tianhao-Gu/kb_GenericsReport.git"
+    GIT_COMMIT_HASH = "003b0cdcebc971f3d200cb2ba066c1eb089f8941"
 
     #BEGIN_CLASS_HEADER
     @staticmethod
