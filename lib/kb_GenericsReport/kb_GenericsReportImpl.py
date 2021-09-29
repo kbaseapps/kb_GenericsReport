@@ -22,9 +22,9 @@ class kb_GenericsReport:
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
     ######################################### noqa
-    VERSION = "1.0.0"
+    VERSION = "1.0.1"
     GIT_URL = "git@github.com:Tianhao-Gu/kb_GenericsReport.git"
-    GIT_COMMIT_HASH = "003b0cdcebc971f3d200cb2ba066c1eb089f8941"
+    GIT_COMMIT_HASH = "8000b96b25db8975a5e63b92dcf26ca0cda8de3e"
 
     #BEGIN_CLASS_HEADER
     @staticmethod

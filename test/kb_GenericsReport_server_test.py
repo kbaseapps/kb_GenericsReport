@@ -98,3 +98,13 @@ class kb_GenericsReportTest(unittest.TestCase):
         html_report_files = os.listdir(html_dir)
 
         self.assertEqual(1, len(html_report_files))
+
+        params = {'tsv_file_path': os.path.join('data', 'single_line.tsv')}
+        returnVal = self.serviceImpl.build_heatmap_html(self.ctx, params)[0]
+
+        self.assertIn('html_dir', returnVal)
+
+        html_dir = returnVal.get('html_dir')
+        html_report_files = os.listdir(html_dir)
+
+        self.assertEqual(1, len(html_report_files))

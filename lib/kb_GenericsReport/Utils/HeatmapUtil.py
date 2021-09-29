@@ -319,6 +319,12 @@ class HeatmapUtil:
             raise ValueError('Please provide a numeric centered_by argument')
 
         data_df = self._read_csv_file(tsv_file_path)
+
+        data_shape = data_df.shape
+        if 1 in data_shape:
+            logging.info('Turnning of clustering due to data size: {}'.format(data_shape))
+            cluster_data = False
+
         if cluster_data and int(top_percent) == 100:
             try:
                 logging.info('Start clustering the whole data set')
